@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:remote_server_demo/model/post.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 class PostRepository{
   final String baseUrl = "https://jsonplaceholder.typicode.com";
@@ -13,7 +13,7 @@ class PostRepository{
     if(response.statusCode == 200){
       List<dynamic> body = jsonDecode(response.body);
       debugPrint(response.body);
-      return body.map(dynamic item) => Post.fromJson(item)).toList();
+      return body.map((dynamic item) => Post.fromJson(item)).toList();
     } else{
       throw Exception("Failed to load posts");
     }
@@ -25,5 +25,11 @@ class PostRepository{
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(post.toJson()),
     );
+  
+    if(response.statusCode == 201) {
+      return Post.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to create post');
+    }
   }
 }
