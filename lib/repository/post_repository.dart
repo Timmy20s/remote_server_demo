@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:remote_server_demo/model/post.dart';
 import 'package:http/http.dart';
 
@@ -11,6 +12,18 @@ class PostRepository{
 
     if(response.statusCode == 200){
       List<dynamic> body = jsonDecode(response.body);
+      debugPrint(response.body);
+      return body.map(dynamic item) => Post.fromJson(item)).toList();
+    } else{
+      throw Exception("Failed to load posts");
     }
+  }
+
+  Future<Post> createPost(Post post) async{
+    final response = await http.post(
+      Uri.parse('$baseUrl/post'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(post.toJson()),
+    );
   }
 }
